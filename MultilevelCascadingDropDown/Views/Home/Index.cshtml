@@ -1,0 +1,47 @@
+﻿@model MultilevelCascadingDropDown.Models.CountryStateCityViewModel
+
+<br /><br />
+      <div class="container">
+          <div class="form-group">
+              @if (ViewBag.countries != null)
+              {
+                  @Html.DropDownListFor(model => model.pkCountryId, ViewBag.countries as SelectList, "--Select countries--", new { @class = "form-control" })
+              }
+
+          </div>
+          <div class="form-group">
+             
+                  @Html.DropDownListFor(model => model.pkStateId, new SelectList(""), "--Select States--", new { @class = "form-control" })
+          
+          </div>
+          <div class="form-group">
+             
+                  @Html.DropDownListFor(model => model.pkCityId, new SelectList(""), "--Select City--", new { @class = "form-control" })
+              
+          </div>
+      </div>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script>
+    $(document).ready( function() {
+        $("#pkCountryId").change(function () {
+            $.get("/Home/GetStateList", { pkCountryId: $("#pkCountryId").val() },
+                function (data) {
+                    $("#pkStateId").empty();
+                    $.each(data, function (index, row) {
+                        $("#pkStateId").append("<option value='" + row.pkStateId + "'>" + row.ukStateName+"</option > ")
+                    });
+                });
+        })
+    });
+    $(document).ready( function() {
+        $("#pkStateId").change(function () {
+            $.get("/Home/GetCityList", { pkStateId: $("#pkStateId").val() },
+                function (data) {
+                    $("#pkCityId").empty();
+                    $.each(data, function (index, row) {
+                        $("#pkCityId").append("<option value='" + row.pkCityId + "'>" + row.ukCityName+"</option > ")
+                    });
+                });
+        })
+    });
+</script>
